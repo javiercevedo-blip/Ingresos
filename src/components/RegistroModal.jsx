@@ -165,6 +165,36 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
             gap: '10px',
             marginTop: '4px'
           }}>
+            {/* Diagnosticado Checkbox */}
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              gap: '6px',
+              padding: '12px 8px',
+              backgroundColor: 'var(--bg-muted)',
+              borderRadius: 'var(--radius-md)',
+              cursor: 'pointer',
+              transition: 'background-color var(--transition-fast)',
+              userSelect: 'none'
+            }}
+            className="checkbox-label"
+            >
+              <input
+                type="checkbox"
+                checked={formData.diagnosticado}
+                onChange={(e) => setFormData({ ...formData, diagnosticado: e.target.checked })}
+                style={{
+                  height: '16px',
+                  width: '16px',
+                  accentColor: 'var(--primary)',
+                  cursor: 'pointer'
+                }}
+              />
+              <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Diagnosticado</span>
+            </label>
+
             {/* Aprobado Checkbox */}
             <label style={{
               display: 'flex',
@@ -253,36 +283,6 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
                 }}
               />
               <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>To Fly</span>
-            </label>
-
-            {/* Diagnosticado Checkbox */}
-            <label style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              gap: '6px',
-              padding: '12px 8px',
-              backgroundColor: 'var(--bg-muted)',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer',
-              transition: 'background-color var(--transition-fast)',
-              userSelect: 'none'
-            }}
-            className="checkbox-label"
-            >
-              <input
-                type="checkbox"
-                checked={formData.diagnosticado}
-                onChange={(e) => setFormData({ ...formData, diagnosticado: e.target.checked })}
-                style={{
-                  height: '16px',
-                  width: '16px',
-                  accentColor: 'var(--primary)',
-                  cursor: 'pointer'
-                }}
-              />
-              <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Diagnosticado</span>
             </label>
           </div>
 

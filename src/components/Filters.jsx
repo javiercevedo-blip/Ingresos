@@ -153,6 +153,30 @@ export default function Filters({ onApplyFilters }) {
               </div>
             </div>
 
+            {/* Select Diagnosticado */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Diagnosticado</label>
+              <select
+                value={filters.diagnosticado === null ? '' : filters.diagnosticado.toString()}
+                onChange={(e) => handleFieldChange('diagnosticado', e.target.value === '' ? null : e.target.value === 'true')}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  backgroundColor: 'var(--bg-primary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '14px',
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="">Todos</option>
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+
             {/* Select Aprobado */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Aprobado</label>
@@ -207,30 +231,6 @@ export default function Filters({ onApplyFilters }) {
               <select
                 value={filters.to_fly === null ? '' : filters.to_fly.toString()}
                 onChange={(e) => handleFieldChange('to_fly', e.target.value === '' ? null : e.target.value === 'true')}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  backgroundColor: 'var(--bg-primary)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: '14px',
-                  color: 'var(--text-primary)',
-                  outline: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="">Todos</option>
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-
-            {/* Select Diagnosticado */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Diagnosticado</label>
-              <select
-                value={filters.diagnosticado === null ? '' : filters.diagnosticado.toString()}
-                onChange={(e) => handleFieldChange('diagnosticado', e.target.value === '' ? null : e.target.value === 'true')}
                 style={{
                   width: '100%',
                   padding: '8px 12px',
