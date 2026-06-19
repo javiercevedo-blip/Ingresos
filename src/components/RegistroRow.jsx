@@ -100,6 +100,11 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField }) {
           {registro.modelo}
         </td>
 
+        {/* Cliente */}
+        <td style={{ padding: '12px 16px', fontSize: '14px', color: 'var(--text-secondary)', whiteSpace: 'nowrap', fontWeight: '500' }}>
+          {registro.cliente}
+        </td>
+
         {/* Statuses (Static in main row view) */}
         <td style={{ padding: '12px 16px', textAlign: 'center' }}>
           <StatusBadge label="Diagnosticado" value={registro.diagnosticado} editable={false} />
@@ -182,7 +187,7 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField }) {
       {/* Expanded Row for editing flags inline and viewing commentary */}
       {isExpanded && (
         <tr style={{ backgroundColor: 'var(--bg-muted)', borderBottom: '1px solid var(--border-color)' }}>
-          <td colSpan={8} style={{ padding: '12px 20px' }}>
+          <td colSpan={9} style={{ padding: '12px 20px' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
               
               {/* Quick toggles */}
@@ -268,7 +273,11 @@ export function RegistroCard({ registro, onEdit, onDelete, onToggleField }) {
               {registro.comentario && <MessageSquare size={13} style={{ color: 'var(--text-muted)', opacity: 0.7 }} />}
               {isExpanded ? <ChevronUp size={14} style={{ color: 'var(--text-muted)' }} /> : <ChevronDown size={14} style={{ color: 'var(--text-muted)' }} />}
             </div>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>{registro.modelo}</span>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px', flexWrap: 'wrap' }}>
+              <span>{registro.modelo}</span>
+              <span style={{ height: '3px', width: '3px', backgroundColor: 'var(--text-muted)', borderRadius: '50%', opacity: 0.6 }} />
+              <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{registro.cliente}</span>
+            </span>
           </button>
 
           {/* Action buttons */}

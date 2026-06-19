@@ -10,6 +10,7 @@ const demoData = [
     id: 'reg-1',
     nui: 'NUI-84729-A',
     modelo: 'Boeing 737 Max 8',
+    cliente: 'Prosegur',
     aprobado: true,
     reparado: true,
     to_fly: true,
@@ -21,6 +22,7 @@ const demoData = [
     id: 'reg-2',
     nui: 'NUI-10928-B',
     modelo: 'Airbus A320neo',
+    cliente: 'Warner',
     aprobado: true,
     reparado: false,
     to_fly: false,
@@ -32,6 +34,7 @@ const demoData = [
     id: 'reg-3',
     nui: 'NUI-56473-C',
     modelo: 'Embraer 190',
+    cliente: 'Guiñez',
     aprobado: false,
     reparado: false,
     to_fly: false,
@@ -43,6 +46,7 @@ const demoData = [
     id: 'reg-4',
     nui: 'NUI-99823-D',
     modelo: 'Cessna Citation Latitude',
+    cliente: 'IMA',
     aprobado: true,
     reparado: true,
     to_fly: true,
@@ -55,7 +59,7 @@ const demoData = [
 export default function App() {
   const [registros, setRegistros] = useState([]);
   const [filteredRegistros, setFilteredRegistros] = useState([]);
-  const [activeFilters, setActiveFilters] = useState({ nui: '', modelo: '', aprobado: null, reparado: null, to_fly: null, diagnosticado: null });
+  const [activeFilters, setActiveFilters] = useState({ nui: '', modelo: '', cliente: '', aprobado: null, reparado: null, to_fly: null, diagnosticado: null });
   
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -96,6 +100,9 @@ export default function App() {
     }
     if (activeFilters.modelo) {
       result = result.filter(r => r.modelo.toLowerCase().includes(activeFilters.modelo.toLowerCase()));
+    }
+    if (activeFilters.cliente) {
+      result = result.filter(r => r.cliente === activeFilters.cliente);
     }
     if (activeFilters.aprobado !== null) {
       result = result.filter(r => r.aprobado === activeFilters.aprobado);

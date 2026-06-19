@@ -4,6 +4,7 @@ import { Search, SlidersHorizontal, ChevronDown, ChevronUp, X, Filter } from 'lu
 const initialFilterState = {
   nui: '',
   modelo: '',
+  cliente: '',
   aprobado: null,
   reparado: null,
   to_fly: null,
@@ -27,7 +28,7 @@ export default function Filters({ onApplyFilters }) {
     onApplyFilters(initialFilterState);
   };
 
-  const hasActiveFilters = filters.nui || filters.modelo || filters.aprobado !== null || filters.reparado !== null || filters.to_fly !== null || filters.diagnosticado !== null;
+  const hasActiveFilters = filters.nui || filters.modelo || filters.cliente || filters.aprobado !== null || filters.reparado !== null || filters.to_fly !== null || filters.diagnosticado !== null;
 
   return (
     <div style={{
@@ -151,6 +152,35 @@ export default function Filters({ onApplyFilters }) {
                   onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
                 />
               </div>
+            </div>
+
+            {/* Select Cliente */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cliente</label>
+              <select
+                value={filters.cliente}
+                onChange={(e) => handleFieldChange('cliente', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  backgroundColor: 'var(--bg-primary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '14px',
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="">Todos</option>
+                <option value="Prosegur">Prosegur</option>
+                <option value="Warner">Warner</option>
+                <option value="Guiñez">Guiñez</option>
+                <option value="AyD">AyD</option>
+                <option value="Somacor">Somacor</option>
+                <option value="Sifron">Sifron</option>
+                <option value="IMA">IMA</option>
+              </select>
             </div>
 
             {/* Select Diagnosticado */}

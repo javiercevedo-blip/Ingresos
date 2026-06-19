@@ -5,6 +5,7 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
   const [formData, setFormData] = useState({
     nui: '',
     modelo: '',
+    cliente: 'Prosegur',
     aprobado: false,
     reparado: false,
     to_fly: false,
@@ -17,6 +18,7 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
       setFormData({
         nui: registro.nui,
         modelo: registro.modelo,
+        cliente: registro.cliente || 'Prosegur',
         aprobado: registro.aprobado,
         reparado: registro.reparado,
         to_fly: registro.to_fly,
@@ -27,6 +29,7 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
       setFormData({
         nui: '',
         modelo: '',
+        cliente: 'Prosegur',
         aprobado: false,
         reparado: false,
         to_fly: false,
@@ -156,6 +159,40 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
               onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
               onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
             />
+          </div>
+
+          {/* Cliente Selector Dropdown */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)' }}>
+              Cliente <span style={{ color: 'var(--danger)' }}>*</span>
+            </label>
+            <select
+              required
+              value={formData.cliente}
+              onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '10px 14px',
+                backgroundColor: 'var(--bg-primary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '14px',
+                color: 'var(--text-primary)',
+                outline: 'none',
+                cursor: 'pointer',
+                transition: 'border-color var(--transition-fast)'
+              }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+            >
+              <option value="Prosegur">Prosegur</option>
+              <option value="Warner">Warner</option>
+              <option value="Guiñez">Guiñez</option>
+              <option value="AyD">AyD</option>
+              <option value="Somacor">Somacor</option>
+              <option value="Sifron">Sifron</option>
+              <option value="IMA">IMA</option>
+            </select>
           </div>
 
           {/* Status Checkboxes Row */}
