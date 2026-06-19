@@ -1,7 +1,7 @@
 import React from 'react';
 import { RegistroRow, RegistroCard } from './RegistroRow';
 
-export default function RegistroList({ registros, onEdit, onDelete, onToggleField }) {
+export default function RegistroList({ registros, onEdit, onDelete, onToggleField, clientes = [] }) {
   if (registros.length === 0) {
     return (
       <div style={{
@@ -32,6 +32,7 @@ export default function RegistroList({ registros, onEdit, onDelete, onToggleFiel
             onEdit={onEdit}
             onDelete={onDelete}
             onToggleField={onToggleField}
+            clientes={clientes}
           />
         ))}
       </div>
@@ -71,6 +72,7 @@ export default function RegistroList({ registros, onEdit, onDelete, onToggleFiel
                   onEdit={onEdit}
                   onDelete={onDelete}
                   onToggleField={onToggleField}
+                  clientes={clientes}
                 />
               ))}
             </tbody>

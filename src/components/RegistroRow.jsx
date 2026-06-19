@@ -59,7 +59,7 @@ export function StatusBadge({ label, value, editable, onToggle }) {
 }
 
 // RegistroRow: Representation inside the Table for Desktop
-export function RegistroRow({ registro, onEdit, onDelete, onToggleField }) {
+export function RegistroRow({ registro, onEdit, onDelete, onToggleField, clientes = [] }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -221,6 +221,41 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField }) {
                 </div>
               </div>
 
+              {/* Asignar Cliente inline */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Asignar Cliente:</span>
+                <select
+                  value={registro.cliente}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '__custom__') {
+                      const newClient = prompt('Ingrese el nombre del nuevo cliente:');
+                      if (newClient && newClient.trim()) {
+                        onToggleField(registro.id, 'cliente', newClient.trim());
+                      }
+                    } else {
+                      onToggleField(registro.id, 'cliente', val);
+                    }
+                  }}
+                  style={{
+                    padding: '4px 8px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-primary)',
+                    color: 'var(--text-primary)',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    fontWeight: '600'
+                  }}
+                >
+                  {clientes.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                  <option value="__custom__">+ Agregar nuevo...</option>
+                </select>
+              </div>
+
               {/* Complete comment */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                 <MessageSquare size={14} style={{ color: 'var(--text-muted)' }} />
@@ -238,7 +273,7 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField }) {
 }
 
 // RegistroCard: Representation for Mobile Cards feed
-export function RegistroCard({ registro, onEdit, onDelete, onToggleField }) {
+export function RegistroCard({ registro, onEdit, onDelete, onToggleField, clientes = [] }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -345,17 +380,57 @@ export function RegistroCard({ registro, onEdit, onDelete, onToggleField }) {
 
       </div>
 
-      {/* Expanded commentary panel */}
+      {/* Expanded panel containing client editor and comments */}
       {isExpanded && (
         <div style={{
           borderTop: '1px solid var(--border-color)',
           padding: '10px 16px',
-          backgroundColor: 'rgba(var(--bg-muted), 0.3)'
+          backgroundColor: 'rgba(var(--bg-muted), 0.3)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
         }}>
-          <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>Comentario</span>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-            {registro.comentario ? registro.comentario : <span style={{ fontStyle: 'italic', opacity: 0.6 }}>Sin comentario</span>}
-          </p>
+          {/* Quick client selector */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', paddingBottom: '8px', borderBottom: '1px dashed var(--border-color)' }}>
+            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Asignar Cliente</span>
+            <select
+              value={registro.cliente}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '__custom__') {
+                  const newClient = prompt('Ingrese el nombre del nuevo cliente:');
+                  if (newClient && newClient.trim()) {
+                    onToggleField(registro.id, 'cliente', newClient.trim());
+                  }
+                } else {
+                  onToggleField(registro.id, 'cliente', val);
+                }
+              }}
+              style={{
+                padding: '4px 8px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--bg-primary)',
+                color: 'var(--text-primary)',
+                fontSize: '12px',
+                cursor: 'pointer',
+                outline: 'none',
+                fontWeight: '600'
+              }}
+            >
+              {clientes.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+              <option value="__custom__">+ Agregar nuevo...</option>
+            </select>
+          </div>
+
+          <div>
+            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>Comentario</span>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+              {registro.comentario ? registro.comentario : <span style={{ fontStyle: 'italic', opacity: 0.6 }}>Sin comentario</span>}
+            </p>
+          </div>
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 
-export default function RegistroModal({ registro, onSave, onClose, isLoading }) {
+export default function RegistroModal({ registro, onSave, onClose, isLoading, clientes = [] }) {
   const [formData, setFormData] = useState({
     nui: '',
     modelo: '',
@@ -12,6 +12,9 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
     diagnosticado: false,
     comentario: '',
   });
+
+  const [isCustomClient, setIsCustomClient] = useState(false);
+  const [customClientName, setCustomClientName] = useState('');
 
   useEffect(() => {
     if (registro) {
@@ -25,23 +28,35 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
         diagnosticado: registro.diagnosticado || false,
         comentario: registro.comentario || '',
       });
+      setIsCustomClient(false);
+      setCustomClientName('');
     } else {
       setFormData({
         nui: '',
         modelo: '',
-        cliente: 'Prosegur',
+        cliente: clientes[0] || 'Prosegur',
         aprobado: false,
         reparado: false,
         to_fly: false,
         diagnosticado: false,
         comentario: '',
       });
+      setIsCustomClient(false);
+      setCustomClientName('');
     }
-  }, [registro]);
+  }, [registro, clientes]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData);
+    const finalClient = isCustomClient ? customClientName.trim() : formData.cliente;
+    if (!finalClient || finalClient === '__custom__') {
+      alert('Por favor, ingresa un nombre de cliente válido.');
+      return;
+    }
+    onSave({
+      ...formData,
+      cliente: finalClient
+    });
   };
 
   const isEditing = !!registro;
@@ -168,8 +183,16 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
             </label>
             <select
               required
-              value={formData.cliente}
-              onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
+              value={isCustomClient ? '__custom__' : formData.cliente}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '__custom__') {
+                  setIsCustomClient(true);
+                } else {
+                  setIsCustomClient(false);
+                  setFormData({ ...formData, cliente: val });
+                }
+              }}
               style={{
                 width: '100%',
                 padding: '10px 14px',
@@ -185,15 +208,41 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
               onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
               onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
             >
-              <option value="Prosegur">Prosegur</option>
-              <option value="Warner">Warner</option>
-              <option value="Guiñez">Guiñez</option>
-              <option value="AyD">AyD</option>
-              <option value="Somacor">Somacor</option>
-              <option value="Sifron">Sifron</option>
-              <option value="IMA">IMA</option>
+              {clientes.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+              <option value="__custom__">+ Agregar cliente personalizado...</option>
             </select>
           </div>
+
+          {/* Custom Client Name Input */}
+          {isCustomClient && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '-4px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>
+                Nombre del Cliente Personalizado <span style={{ color: 'var(--danger)' }}>*</span>
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Escribe el nombre del cliente"
+                value={customClientName}
+                onChange={(e) => setCustomClientName(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  backgroundColor: 'var(--bg-primary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '14px',
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  transition: 'border-color var(--transition-fast)'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+              />
+            </div>
+          )}
 
           {/* Status Checkboxes Row */}
           <div style={{

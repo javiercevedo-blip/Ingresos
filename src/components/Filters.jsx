@@ -11,7 +11,7 @@ const initialFilterState = {
   diagnosticado: null,
 };
 
-export default function Filters({ onApplyFilters }) {
+export default function Filters({ onApplyFilters, clientes = [] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState(initialFilterState);
 
@@ -173,13 +173,9 @@ export default function Filters({ onApplyFilters }) {
                 }}
               >
                 <option value="">Todos</option>
-                <option value="Prosegur">Prosegur</option>
-                <option value="Warner">Warner</option>
-                <option value="Guiñez">Guiñez</option>
-                <option value="AyD">AyD</option>
-                <option value="Somacor">Somacor</option>
-                <option value="Sifron">Sifron</option>
-                <option value="IMA">IMA</option>
+                {clientes.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
               </select>
             </div>
 

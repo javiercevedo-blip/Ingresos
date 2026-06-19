@@ -60,6 +60,7 @@ export default function App() {
   const [registros, setRegistros] = useState([]);
   const [filteredRegistros, setFilteredRegistros] = useState([]);
   const [activeFilters, setActiveFilters] = useState({ nui: '', modelo: '', cliente: '', aprobado: null, reparado: null, to_fly: null, diagnosticado: null });
+  const [clientes, setClientes] = useState(['Prosegur', 'Warner', 'Guiñez', 'AyD', 'Somacor', 'Sifron', 'IMA']);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,7 +76,22 @@ export default function App() {
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    // 2. Data initialization
+    // 2. Clients initialization
+    const storedClients = localStorage.getItem('ingresos-clients');
+    const defaultClients = ['Prosegur', 'Warner', 'Guiñez', 'AyD', 'Somacor', 'Sifron', 'IMA'];
+    if (storedClients) {
+      try {
+        setClientes(JSON.parse(storedClients));
+      } catch (e) {
+        setClientes(defaultClients);
+        localStorage.setItem('ingresos-clients', JSON.stringify(defaultClients));
+      }
+    } else {
+      setClientes(defaultClients);
+      localStorage.setItem('ingresos-clients', JSON.stringify(defaultClients));
+    }
+
+    // 3. Data initialization
     const stored = localStorage.getItem('ingresos-data');
     if (stored) {
       try {
@@ -136,10 +152,28 @@ export default function App() {
     localStorage.setItem('ingresos-theme', nextTheme);
   };
 
+  // Add client to the list if not present
+  const addClientIfNew = (clientName) => {
+    if (clientName && clientName.trim() !== '') {
+      const trimmed = clientName.trim();
+      setClientes(prev => {
+        if (!prev.includes(trimmed)) {
+          const updated = [...prev, trimmed];
+          localStorage.setItem('ingresos-clients', JSON.stringify(updated));
+          return updated;
+        }
+        return prev;
+      });
+    }
+  };
+
   // CRUD Actions
   const handleSave = (formData) => {
     setIsLoading(true);
     setTimeout(() => { // Subtle delay for simulated save feel
+      if (formData.cliente) {
+        addClientIfNew(formData.cliente);
+      }
       if (editingRegistro) {
         // Edit Mode
         const updated = registros.map(r => 
@@ -170,10 +204,13 @@ export default function App() {
     }
   };
 
-  const handleToggleField = (id, field, currentValue) => {
+  const handleToggleField = (id, field, value) => {
+    if (field === 'cliente' && typeof value === 'string') {
+      addClientIfNew(value);
+    }
     const updated = registros.map(r => 
       r.id === id 
-        ? { ...r, [field]: !currentValue, updated_at: new Date().toISOString() }
+        ? { ...r, [field]: typeof value === 'boolean' ? !value : value, updated_at: new Date().toISOString() }
         : r
     );
     saveToStorage(updated);
@@ -216,6 +253,10 @@ export default function App() {
           // Basic schema verification
           const isValid = importedData.every(item => item.nui && item.modelo && 'aprobado' in item);
           if (isValid) {
+            // Add any imported clients to permanent client list if new
+            const importedClients = importedData.map(r => r.cliente).filter(Boolean);
+            importedClients.forEach(c => addClientIfNew(c));
+
             saveToStorage(importedData);
             alert('¡Registros importados con éxito!');
           } else {
@@ -417,7 +458,7 @@ export default function App() {
       }}>
         
         {/* Filters */}
-        <Filters onApplyFilters={setActiveFilters} />
+        <Filters onApplyFilters={setActiveFilters} clientes={clientes} />
 
         {/* Counter indicator */}
         <div style={{
@@ -454,6 +495,7 @@ export default function App() {
             }}
             onDelete={handleDelete}
             onToggleField={handleToggleField}
+            clientes={clientes}
           />
         )}
 
@@ -469,6 +511,7 @@ export default function App() {
             setEditingRegistro(null);
           }}
           isLoading={isLoading}
+          clientes={clientes}
         />
       )}
 
