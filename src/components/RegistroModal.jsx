@@ -8,6 +8,7 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
     aprobado: false,
     reparado: false,
     to_fly: false,
+    diagnosticado: false,
     comentario: '',
   });
 
@@ -19,6 +20,7 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
         aprobado: registro.aprobado,
         reparado: registro.reparado,
         to_fly: registro.to_fly,
+        diagnosticado: registro.diagnosticado || false,
         comentario: registro.comentario || '',
       });
     } else {
@@ -28,6 +30,7 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
         aprobado: false,
         reparado: false,
         to_fly: false,
+        diagnosticado: false,
         comentario: '',
       });
     }
@@ -158,8 +161,8 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
           {/* Status Checkboxes Row */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '8px',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '10px',
             marginTop: '4px'
           }}>
             {/* Aprobado Checkbox */}
@@ -250,6 +253,36 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading }) 
                 }}
               />
               <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>To Fly</span>
+            </label>
+
+            {/* Diagnosticado Checkbox */}
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              gap: '6px',
+              padding: '12px 8px',
+              backgroundColor: 'var(--bg-muted)',
+              borderRadius: 'var(--radius-md)',
+              cursor: 'pointer',
+              transition: 'background-color var(--transition-fast)',
+              userSelect: 'none'
+            }}
+            className="checkbox-label"
+            >
+              <input
+                type="checkbox"
+                checked={formData.diagnosticado}
+                onChange={(e) => setFormData({ ...formData, diagnosticado: e.target.checked })}
+                style={{
+                  height: '16px',
+                  width: '16px',
+                  accentColor: 'var(--primary)',
+                  cursor: 'pointer'
+                }}
+              />
+              <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>Diagnosticado</span>
             </label>
           </div>
 

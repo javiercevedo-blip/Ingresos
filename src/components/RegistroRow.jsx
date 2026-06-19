@@ -110,6 +110,9 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField }) {
         <td style={{ padding: '12px 16px', textAlign: 'center' }}>
           <StatusBadge label="To Fly" value={registro.to_fly} editable={false} />
         </td>
+        <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+          <StatusBadge label="Diagnosticado" value={registro.diagnosticado} editable={false} />
+        </td>
 
         {/* Comentario Truncated */}
         <td style={{ padding: '12px 16px', fontSize: '13px', color: 'var(--text-muted)', maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -179,7 +182,7 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField }) {
       {/* Expanded Row for editing flags inline and viewing commentary */}
       {isExpanded && (
         <tr style={{ backgroundColor: 'var(--bg-muted)', borderBottom: '1px solid var(--border-color)' }}>
-          <td colSpan={7} style={{ padding: '12px 20px' }}>
+          <td colSpan={8} style={{ padding: '12px 20px' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
               
               {/* Quick toggles */}
@@ -203,6 +206,12 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField }) {
                     value={registro.to_fly} 
                     editable={true} 
                     onToggle={() => onToggleField(registro.id, 'to_fly', registro.to_fly)} 
+                  />
+                  <StatusBadge 
+                    label="Diagnosticado" 
+                    value={registro.diagnosticado} 
+                    editable={true} 
+                    onToggle={() => onToggleField(registro.id, 'diagnosticado', registro.diagnosticado)} 
                   />
                 </div>
               </div>
@@ -316,6 +325,12 @@ export function RegistroCard({ registro, onEdit, onDelete, onToggleField }) {
             value={registro.to_fly} 
             editable={isExpanded} 
             onToggle={() => onToggleField(registro.id, 'to_fly', registro.to_fly)} 
+          />
+          <StatusBadge 
+            label="Diagnosticado" 
+            value={registro.diagnosticado} 
+            editable={isExpanded} 
+            onToggle={() => onToggleField(registro.id, 'diagnosticado', registro.diagnosticado)} 
           />
         </div>
 

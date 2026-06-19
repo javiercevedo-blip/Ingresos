@@ -13,6 +13,7 @@ const demoData = [
     aprobado: true,
     reparado: true,
     to_fly: true,
+    diagnosticado: true,
     comentario: 'Inspección de turbinas completada y aprobada por torre de control.',
     created_at: new Date(Date.now() - 3600000 * 24 * 3).toISOString() // 3 days ago
   },
@@ -23,6 +24,7 @@ const demoData = [
     aprobado: true,
     reparado: false,
     to_fly: false,
+    diagnosticado: true,
     comentario: 'Pendiente de cambio de filtros hidráulicos en ala izquierda.',
     created_at: new Date(Date.now() - 3600000 * 24 * 2).toISOString() // 2 days ago
   },
@@ -33,6 +35,7 @@ const demoData = [
     aprobado: false,
     reparado: false,
     to_fly: false,
+    diagnosticado: false,
     comentario: 'Daño en radar meteorológico detectado durante aterrizaje.',
     created_at: new Date(Date.now() - 3600000 * 5).toISOString() // 5 hours ago
   },
@@ -43,6 +46,7 @@ const demoData = [
     aprobado: true,
     reparado: true,
     to_fly: true,
+    diagnosticado: true,
     comentario: 'Vuelo de prueba exitoso. Listo para entrega al hangar principal.',
     created_at: new Date(Date.now() - 3600000 * 24).toISOString() // 1 day ago
   }
@@ -51,7 +55,7 @@ const demoData = [
 export default function App() {
   const [registros, setRegistros] = useState([]);
   const [filteredRegistros, setFilteredRegistros] = useState([]);
-  const [activeFilters, setActiveFilters] = useState({ nui: '', modelo: '', aprobado: null, reparado: null, to_fly: null });
+  const [activeFilters, setActiveFilters] = useState({ nui: '', modelo: '', aprobado: null, reparado: null, to_fly: null, diagnosticado: null });
   
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -101,6 +105,9 @@ export default function App() {
     }
     if (activeFilters.to_fly !== null) {
       result = result.filter(r => r.to_fly === activeFilters.to_fly);
+    }
+    if (activeFilters.diagnosticado !== null) {
+      result = result.filter(r => r.diagnosticado === activeFilters.diagnosticado);
     }
 
     // Sort by creation date descending
