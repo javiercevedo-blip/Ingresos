@@ -100,11 +100,35 @@ export default function App() {
         setRegistros(demoData);
         localStorage.setItem('ingresos-data', JSON.stringify(demoData));
       }
+      setIsLoading(false);
     } else {
-      setRegistros(demoData);
-      localStorage.setItem('ingresos-data', JSON.stringify(demoData));
+      // Intentar cargar copia de respaldo desde el repositorio, si no existe usar demoData
+      fetch('./ingresos_backup.json')
+        .then(res => {
+          if (res.ok) return res.json();
+          throw new Error('No backup file found');
+        })
+        .then(data => {
+          if (Array.isArray(data)) {
+            setRegistros(data);
+            localStorage.setItem('ingresos-data', JSON.stringify(data));
+            // Sincronizar también los clientes que puedan venir en la copia
+            const importedClients = data.map(r => r.cliente).filter(Boolean);
+            const currentClients = JSON.parse(localStorage.getItem('ingresos-clients') || '[]');
+            const combinedClients = Array.from(new Set([...currentClients, ...importedClients]));
+            setClientes(combinedClients);
+            localStorage.setItem('ingresos-clients', JSON.stringify(combinedClients));
+          } else {
+            throw new Error('Invalid backup format');
+          }
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setRegistros(demoData);
+          localStorage.setItem('ingresos-data', JSON.stringify(demoData));
+          setIsLoading(false);
+        });
     }
-    setIsLoading(false);
   }, []);
 
   // Filter application logic
