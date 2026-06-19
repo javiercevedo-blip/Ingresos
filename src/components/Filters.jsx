@@ -21,6 +21,7 @@ export default function Filters({ onApplyFilters, clientes = [] }) {
 
   const applyFilters = () => {
     onApplyFilters(filters);
+    setIsOpen(false);
   };
 
   const clearFilters = () => {
