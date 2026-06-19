@@ -61,6 +61,12 @@ export default function App() {
   const [filteredRegistros, setFilteredRegistros] = useState([]);
   const [activeFilters, setActiveFilters] = useState({ nui: '', modelo: '', cliente: '', aprobado: null, reparado: null, to_fly: null, diagnosticado: null });
   const [clientes, setClientes] = useState(['Prosegur', 'Warner', 'Guiñez', 'AyD', 'Somacor', 'Sifron', 'IMA']);
+  const [modelos, setModelos] = useState({
+    "Enterprise": [],
+    "Consumer": [],
+    "Carga / Delivery": [],
+    "Otros / Personalizados": []
+  });
   
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,6 +97,62 @@ export default function App() {
       localStorage.setItem('ingresos-clients', JSON.stringify(defaultClients));
     }
 
+    // 2.5 Models initialization
+    const storedModels = localStorage.getItem('ingresos-models');
+    const defaultModels = {
+      "Enterprise": [
+        "Matrice 400",
+        "Matrice 350 RTK",
+        "Matrice 300 RTK",
+        "Matrice 4T",
+        "Matrice 4E",
+        "Matrice 4D (Dock 3)",
+        "Matrice 30T",
+        "Matrice 30",
+        "Mavic 3 Enterprise",
+        "Mavic 3 Thermal",
+        "Mavic 3 Multispectral",
+        "Avata 2",
+        "Mini 4 Pro",
+        "Inspire 3",
+        "Dock 2"
+      ],
+      "Consumer": [
+        "Mavic 4 Pro",
+        "Air 3S",
+        "Air 3",
+        "Air 2S",
+        "Air 2",
+        "Mavic 3 Pro",
+        "Mavic 3 Classic",
+        "Mavic 3",
+        "Mini 5 Pro",
+        "Mini 3 Pro",
+        "Mini 3",
+        "Mini 2 SE",
+        "Mini 2",
+        "DJI Lito 1",
+        "DJI Lito X1",
+        "Neo",
+        "Flip"
+      ],
+      "Carga / Delivery": [
+        "FlyCart 30"
+      ],
+      "Otros / Personalizados": []
+    };
+    if (storedModels) {
+      try {
+        setModelos(JSON.parse(storedModels));
+      } catch (e) {
+        setModelos(defaultModels);
+        localStorage.setItem('ingresos-models', JSON.stringify(defaultModels));
+      }
+    } else {
+      setModelos(defaultModels);
+      localStorage.setItem('ingresos-models', JSON.stringify(defaultModels));
+    }
+
     // 3. Data initialization
     const stored = localStorage.getItem('ingresos-data');
     if (stored) {
@@ -112,12 +174,29 @@ export default function App() {
           if (Array.isArray(data)) {
             setRegistros(data);
             localStorage.setItem('ingresos-data', JSON.stringify(data));
-            // Sincronizar también los clientes que puedan venir en la copia
+            
+            // Sincronizar clientes
             const importedClients = data.map(r => r.cliente).filter(Boolean);
             const currentClients = JSON.parse(localStorage.getItem('ingresos-clients') || '[]');
             const combinedClients = Array.from(new Set([...currentClients, ...importedClients]));
             setClientes(combinedClients);
             localStorage.setItem('ingresos-clients', JSON.stringify(combinedClients));
+
+            // Sincronizar modelos
+            const importedModels = data.map(r => r.modelo).filter(Boolean);
+            const currentModels = JSON.parse(localStorage.getItem('ingresos-models') || JSON.stringify(defaultModels));
+            const modelExists = (allModels, name) => Object.values(allModels).some(list => list.includes(name));
+            let updatedModels = { ...currentModels };
+            if (!updatedModels["Otros / Personalizados"]) {
+              updatedModels["Otros / Personalizados"] = [];
+            }
+            importedModels.forEach(m => {
+              if (!modelExists(updatedModels, m)) {
+                updatedModels["Otros / Personalizados"].push(m);
+              }
+            });
+            setModelos(updatedModels);
+            localStorage.setItem('ingresos-models', JSON.stringify(updatedModels));
           } else {
             throw new Error('Invalid backup format');
           }
@@ -139,7 +218,7 @@ export default function App() {
       result = result.filter(r => r.nui.toLowerCase().includes(activeFilters.nui.toLowerCase()));
     }
     if (activeFilters.modelo) {
-      result = result.filter(r => r.modelo.toLowerCase().includes(activeFilters.modelo.toLowerCase()));
+      result = result.filter(r => r.modelo === activeFilters.modelo);
     }
     if (activeFilters.cliente) {
       result = result.filter(r => r.cliente === activeFilters.cliente);
@@ -191,12 +270,34 @@ export default function App() {
     }
   };
 
+  // Add model to the list if not present
+  const addModelIfNew = (modelName) => {
+    if (modelName && modelName.trim() !== '') {
+      const trimmed = modelName.trim();
+      setModelos(prev => {
+        const exists = Object.values(prev).some(list => list.includes(trimmed));
+        if (!exists) {
+          const updated = {
+            ...prev,
+            "Otros / Personalizados": [...(prev["Otros / Personalizados"] || []), trimmed]
+          };
+          localStorage.setItem('ingresos-models', JSON.stringify(updated));
+          return updated;
+        }
+        return prev;
+      });
+    }
+  };
+
   // CRUD Actions
   const handleSave = (formData) => {
     setIsLoading(true);
     setTimeout(() => { // Subtle delay for simulated save feel
       if (formData.cliente) {
         addClientIfNew(formData.cliente);
+      }
+      if (formData.modelo) {
+        addModelIfNew(formData.modelo);
       }
       if (editingRegistro) {
         // Edit Mode
@@ -231,6 +332,9 @@ export default function App() {
   const handleToggleField = (id, field, value) => {
     if (field === 'cliente' && typeof value === 'string') {
       addClientIfNew(value);
+    }
+    if (field === 'modelo' && typeof value === 'string') {
+      addModelIfNew(value);
     }
     const updated = registros.map(r => 
       r.id === id 
@@ -277,9 +381,12 @@ export default function App() {
           // Basic schema verification
           const isValid = importedData.every(item => item.nui && item.modelo && 'aprobado' in item);
           if (isValid) {
-            // Add any imported clients to permanent client list if new
+            // Add any imported clients and models to permanent lists if new
             const importedClients = importedData.map(r => r.cliente).filter(Boolean);
             importedClients.forEach(c => addClientIfNew(c));
+
+            const importedModels = importedData.map(r => r.modelo).filter(Boolean);
+            importedModels.forEach(m => addModelIfNew(m));
 
             saveToStorage(importedData);
             alert('¡Registros importados con éxito!');
@@ -482,7 +589,7 @@ export default function App() {
       }}>
         
         {/* Filters */}
-        <Filters onApplyFilters={setActiveFilters} clientes={clientes} />
+        <Filters onApplyFilters={setActiveFilters} clientes={clientes} modelos={modelos} />
 
         {/* Counter indicator */}
         <div style={{
@@ -520,6 +627,7 @@ export default function App() {
             onDelete={handleDelete}
             onToggleField={handleToggleField}
             clientes={clientes}
+            modelos={modelos}
           />
         )}
 
@@ -536,6 +644,7 @@ export default function App() {
           }}
           isLoading={isLoading}
           clientes={clientes}
+          modelos={modelos}
         />
       )}
 

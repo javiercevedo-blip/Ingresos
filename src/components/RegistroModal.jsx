@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 
-export default function RegistroModal({ registro, onSave, onClose, isLoading, clientes = [] }) {
+export default function RegistroModal({ registro, onSave, onClose, isLoading, clientes = [], modelos = {} }) {
   const [formData, setFormData] = useState({
     nui: '',
     modelo: '',
@@ -16,11 +16,14 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading, cl
   const [isCustomClient, setIsCustomClient] = useState(false);
   const [customClientName, setCustomClientName] = useState('');
 
+  const [isCustomModel, setIsCustomModel] = useState(false);
+  const [customModelName, setCustomModelName] = useState('');
+
   useEffect(() => {
     if (registro) {
       setFormData({
         nui: registro.nui,
-        modelo: registro.modelo,
+        modelo: registro.modelo || '',
         cliente: registro.cliente || 'Prosegur',
         aprobado: registro.aprobado,
         reparado: registro.reparado,
@@ -30,6 +33,8 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading, cl
       });
       setIsCustomClient(false);
       setCustomClientName('');
+      setIsCustomModel(false);
+      setCustomModelName('');
     } else {
       setFormData({
         nui: '',
@@ -43,19 +48,27 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading, cl
       });
       setIsCustomClient(false);
       setCustomClientName('');
+      setIsCustomModel(false);
+      setCustomModelName('');
     }
   }, [registro, clientes]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const finalClient = isCustomClient ? customClientName.trim() : formData.cliente;
+    const finalModel = isCustomModel ? customModelName.trim() : formData.modelo;
     if (!finalClient || finalClient === '__custom__') {
       alert('Por favor, ingresa un nombre de cliente válido.');
       return;
     }
+    if (!finalModel || finalModel === '__custom__') {
+      alert('Por favor, selecciona o ingresa un modelo válido.');
+      return;
+    }
     onSave({
       ...formData,
-      cliente: finalClient
+      cliente: finalClient,
+      modelo: finalModel
     });
   };
 
@@ -154,12 +167,18 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading, cl
             <label style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)' }}>
               Modelo <span style={{ color: 'var(--danger)' }}>*</span>
             </label>
-            <input
-              type="text"
+            <select
               required
-              placeholder="Ej. Boeing 737 Max"
-              value={formData.modelo}
-              onChange={(e) => setFormData({ ...formData, modelo: e.target.value })}
+              value={isCustomModel ? '__custom__' : formData.modelo}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '__custom__') {
+                  setIsCustomModel(true);
+                } else {
+                  setIsCustomModel(false);
+                  setFormData({ ...formData, modelo: val });
+                }
+              }}
               style={{
                 width: '100%',
                 padding: '10px 14px',
@@ -169,12 +188,54 @@ export default function RegistroModal({ registro, onSave, onClose, isLoading, cl
                 fontSize: '14px',
                 color: 'var(--text-primary)',
                 outline: 'none',
+                cursor: 'pointer',
                 transition: 'border-color var(--transition-fast)'
               }}
               onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
               onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
-            />
+            >
+              <option value="">— Seleccionar —</option>
+              {Object.entries(modelos).map(([category, list]) => (
+                list && list.length > 0 && (
+                  <optgroup key={category} label={category}>
+                    {list.map(m => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </optgroup>
+                )
+              ))}
+              <option value="__custom__">+ Agregar modelo personalizado...</option>
+            </select>
           </div>
+
+          {/* Custom Model Name Input */}
+          {isCustomModel && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '-4px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>
+                Nombre del Modelo Personalizado <span style={{ color: 'var(--danger)' }}>*</span>
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Escribe el nombre del modelo"
+                value={customModelName}
+                onChange={(e) => setCustomModelName(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  backgroundColor: 'var(--bg-primary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '14px',
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  transition: 'border-color var(--transition-fast)'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+              />
+            </div>
+          )}
 
           {/* Cliente Selector Dropdown */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>

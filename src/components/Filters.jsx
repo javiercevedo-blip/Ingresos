@@ -11,7 +11,7 @@ const initialFilterState = {
   diagnosticado: null,
 };
 
-export default function Filters({ onApplyFilters, clientes = [] }) {
+export default function Filters({ onApplyFilters, clientes = [], modelos = {} }) {
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState(initialFilterState);
 
@@ -127,32 +127,35 @@ export default function Filters({ onApplyFilters, clientes = [] }) {
               </div>
             </div>
 
-            {/* Input Modelo */}
+            {/* Select Modelo */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Modelo</label>
-              <div style={{ position: 'relative' }}>
-                <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
-                <input
-                  type="text"
-                  placeholder="Buscar modelo..."
-                  value={filters.modelo}
-                  onChange={(e) => handleFieldChange('modelo', e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && applyFilters()}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px 8px 36px',
-                    backgroundColor: 'var(--bg-primary)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--radius-sm)',
-                    fontSize: '14px',
-                    color: 'var(--text-primary)',
-                    outline: 'none',
-                    transition: 'border-color var(--transition-fast)'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = 'var(--border-focus)'}
-                  onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
-                />
-              </div>
+              <select
+                value={filters.modelo}
+                onChange={(e) => handleFieldChange('modelo', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  backgroundColor: 'var(--bg-primary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '14px',
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="">Todos</option>
+                {Object.entries(modelos).map(([category, list]) => (
+                  list && list.length > 0 && (
+                    <optgroup key={category} label={category}>
+                      {list.map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </optgroup>
+                  )
+                ))}
+              </select>
             </div>
 
             {/* Select Cliente */}

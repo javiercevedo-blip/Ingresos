@@ -59,7 +59,7 @@ export function StatusBadge({ label, value, editable, onToggle }) {
 }
 
 // RegistroRow: Representation inside the Table for Desktop
-export function RegistroRow({ registro, onEdit, onDelete, onToggleField, clientes = [] }) {
+export function RegistroRow({ registro, onEdit, onDelete, onToggleField, clientes = [], modelos = {} }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -256,6 +256,47 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField, cliente
                 </select>
               </div>
 
+              {/* Asignar Modelo inline */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Asignar Modelo:</span>
+                <select
+                  value={registro.modelo}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '__custom__') {
+                      const newModel = prompt('Ingrese el nombre del nuevo modelo:');
+                      if (newModel && newModel.trim()) {
+                        onToggleField(registro.id, 'modelo', newModel.trim());
+                      }
+                    } else {
+                      onToggleField(registro.id, 'modelo', val);
+                    }
+                  }}
+                  style={{
+                    padding: '4px 8px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-primary)',
+                    color: 'var(--text-primary)',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    fontWeight: '600'
+                  }}
+                >
+                  {Object.entries(modelos).map(([category, list]) => (
+                    list && list.length > 0 && (
+                      <optgroup key={category} label={category}>
+                        {list.map(m => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </optgroup>
+                    )
+                  ))}
+                  <option value="__custom__">+ Agregar nuevo...</option>
+                </select>
+              </div>
+
               {/* Complete comment */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                 <MessageSquare size={14} style={{ color: 'var(--text-muted)' }} />
@@ -273,7 +314,7 @@ export function RegistroRow({ registro, onEdit, onDelete, onToggleField, cliente
 }
 
 // RegistroCard: Representation for Mobile Cards feed
-export function RegistroCard({ registro, onEdit, onDelete, onToggleField, clientes = [] }) {
+export function RegistroCard({ registro, onEdit, onDelete, onToggleField, clientes = [], modelos = {} }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -380,7 +421,7 @@ export function RegistroCard({ registro, onEdit, onDelete, onToggleField, client
 
       </div>
 
-      {/* Expanded panel containing client editor and comments */}
+      {/* Expanded panel containing client editor, model editor and comments */}
       {isExpanded && (
         <div style={{
           borderTop: '1px solid var(--border-color)',
@@ -420,6 +461,47 @@ export function RegistroCard({ registro, onEdit, onDelete, onToggleField, client
             >
               {clientes.map(c => (
                 <option key={c} value={c}>{c}</option>
+              ))}
+              <option value="__custom__">+ Agregar nuevo...</option>
+            </select>
+          </div>
+
+          {/* Quick model selector */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', paddingBottom: '8px', borderBottom: '1px dashed var(--border-color)' }}>
+            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Asignar Modelo</span>
+            <select
+              value={registro.modelo}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '__custom__') {
+                  const newModel = prompt('Ingrese el nombre del nuevo modelo:');
+                  if (newModel && newModel.trim()) {
+                    onToggleField(registro.id, 'modelo', newModel.trim());
+                  }
+                } else {
+                  onToggleField(registro.id, 'modelo', val);
+                }
+              }}
+              style={{
+                padding: '4px 8px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--bg-primary)',
+                color: 'var(--text-primary)',
+                fontSize: '12px',
+                cursor: 'pointer',
+                outline: 'none',
+                fontWeight: '600'
+              }}
+            >
+              {Object.entries(modelos).map(([category, list]) => (
+                list && list.length > 0 && (
+                  <optgroup key={category} label={category}>
+                    {list.map(m => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </optgroup>
+                )
               ))}
               <option value="__custom__">+ Agregar nuevo...</option>
             </select>

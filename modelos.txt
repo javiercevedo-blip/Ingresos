@@ -1,0 +1,38 @@
+[ENTERPRISE]
+Matrice 400
+Matrice 350 RTK
+Matrice 300 RTK
+Matrice 4T
+Matrice 4E
+Matrice 4D (Dock 3)
+Matrice 30T
+Matrice 30
+Mavic 3 Enterprise
+Mavic 3 Thermal
+Mavic 3 Multispectral
+Avata 2
+Mini 4 Pro
+Inspire 3
+Dock 2
+
+[CONSUMER]
+Mavic 4 Pro
+Air 3S
+Air 3
+Air 2S
+Air 2
+Mavic 3 Pro
+Mavic 3 Classic
+Mavic 3
+Mini 5 Pro
+Mini 3 Pro
+Mini 3
+Mini 2 SE
+Mini 2
+DJI Lito 1
+DJI Lito X1
+Neo
+Flip
+
+[CARGA / DELIVERY]
+FlyCart 30
